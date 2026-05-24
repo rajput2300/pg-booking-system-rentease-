@@ -1,6 +1,6 @@
 # 🏠 RentEase.in — PG Rental Platform
-
-India's production-ready PG booking platform built with Node.js, Express, MongoDB, EJS & Bootstrap 5.
+A full-stack role-based PG booking system with real-world booking flow, admin control, and location-based discovery.
+- production-ready PG booking platform built with Node.js, Express, MongoDB, EJS & Bootstrap 5.
 
 ## 🚀 Quick Start
 
@@ -8,11 +8,30 @@ India's production-ready PG booking platform built with Node.js, Express, MongoD
 - Node.js v18+
 - MongoDB (local or Atlas)
 
-  ## 🌐 Live Demo
+## 🌐 Live Demo
 
 > https://rentease-kfyl.onrender.com/
 
-### Installation
+# 🛠️ Tech Stack
+
+- Frontend: EJS, Bootstrap 5, HTML, CSS, JavaScript  
+- Backend: Node.js, Express.js  
+- Database: MongoDB Atlas  
+- Authentication: bcrypt, express-session  
+- File Uploads: Multer with Cloudinary integration (for image storage)
+- Maps: Leaflet.js + OpenStreetMap  
+- Architecture: MVC Pattern  
+
+---
+
+## 🧠 Architecture
+
+- MVC (Model-View-Controller) design pattern
+- RESTful routing structure
+- Middleware-based authentication system
+- Modular and scalable backend architecture
+
+### 🚀 Installation
 
 ```bash
 # 1. Install dependencies
@@ -131,28 +150,18 @@ SESSION_SECRET=your_very_long_random_secret_here
 NODE_ENV=production
 ```
 
+
 ### Production Deploy (Railway / Render / Heroku)
 1. Push code to GitHub
 2. Set env vars in platform dashboard
 3. Build command: `npm install`
 4. Start command: `npm start`
 5. Ensure MongoDB Atlas URI is set
+   
+   ⚠️ Note: First request on Render may take 30–50 seconds due to server cold start.
 
-### Nginx Config (VPS)
-```nginx
-server {
-    listen 80;
-    server_name rentease.in;
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
+## 👨‍💻 Author
+Built as a full-stack development project focusing on real-world booking systems, authentication flow, and scalable backend architecture.
 
-Use PM2 for process management: `pm2 start app.js --name rentease`
+
 

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🏠 RentEase.in — PG Rental Platform
 
 India's production-ready PG booking platform built with Node.js, Express, MongoDB, EJS & Bootstrap 5.
@@ -8,6 +7,10 @@ India's production-ready PG booking platform built with Node.js, Express, MongoD
 ### Prerequisites
 - Node.js v18+
 - MongoDB (local or Atlas)
+
+  ## 🌐 Live Demo
+
+> 🚀 comming
 
 ### Installation
 
@@ -152,7 +155,4 @@ server {
 ```
 
 Use PM2 for process management: `pm2 start app.js --name rentease`
-=======
-# pg-booking-system-rentease-
-Rentease is a full-stack MERN web application that helps users find, list, and book paying guest (PG) accommodations with ease. It includes user authentication, property listings, booking system, reviews, and a secure backend integrated with MongoDB Atlas.
->>>>>>> 32e1e8da10fbe08363854a67d1800c3285b027a7
+

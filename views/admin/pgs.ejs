@@ -1,0 +1,79 @@
+<% layout("/layouts/boilerplate.ejs") %>
+  <div class="admin-wrapper">
+    <%- include('../partials/admin-sidebar', { activePage: 'pgs' }) %>
+    <div class="admin-main">
+      <%- include('../partials/flash') %>
+      <div class="admin-header d-flex justify-content-between align-items-center">
+        <div>
+          <h1>Manage PG Listings</h1>
+          <p class="text-muted mb-0"><%= pgs.length %> total listings</p>
+        </div>
+        <a href="/admin/pgs/new" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Add PG</a>
+      </div>
+
+      <div class="admin-table">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>PG Name</th>
+              <th>Location</th>
+              <th>Price</th>
+              <th>Gender</th>
+              <th>Rooms</th>
+              <th>Rating</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (pgs.length > 0) { %>
+              <% pgs.forEach(pg => { %>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <img src="<%= pg.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=100' %>"
+                        style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                      <div>
+                        <div class="fw-600 small"><%= pg.title.substring(0,30) %></div>
+                        <% if (pg.featured) { %><span style="color: #F59E0B; font-size: 0.7rem;">★ Featured</span><% } %>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="text-muted small"><%= pg.location %>, <%= pg.city %></span></td>
+                  <td><span class="fw-700 text-primary">₹<%= pg.price.toLocaleString('en-IN') %></span></td>
+                  <td><span class="badge" style="background: var(--bg-light); color: var(--text-muted); border: 1px solid var(--border);"><%= pg.gender %></span></td>
+                  <td><span class="text-muted small"><%= pg.availableRooms %>/<%= pg.totalRooms %></span></td>
+                  <td><span class="fw-600" style="color: #F59E0B;"><%= pg.rating > 0 ? pg.rating + '★' : '—' %></span></td>
+                  <td>
+                    <span class="badge" style="background: <%= pg.status === 'active' ? '#D1FAE5' : pg.status === 'pending_approval' ? '#FEF3C7' : '#FEE2E2' %>; color: <%= pg.status === 'active' ? '#065F46' : pg.status === 'pending_approval' ? '#92400E' : '#991B1B' %>; border-radius: 100px; padding: 5px 10px; font-size: 0.75rem;">
+                      <%= pg.status === 'pending_approval' ? '⏳ Pending Review' : pg.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                      <a href="/pgs/<%= pg._id %>" class="btn btn-sm btn-outline-secondary py-0" title="View"><i class="bi bi-eye"></i></a>
+                      <a href="/admin/pgs/<%= pg._id %>/edit" class="btn btn-sm btn-outline-primary py-0" title="Edit"><i class="bi bi-pencil"></i></a>
+                      <% if (pg.status === 'pending_approval') { %>
+                        <form action="/admin/pgs/<%= pg._id %>/approve" method="POST">
+                          <button class="btn btn-sm btn-success py-0" title="Approve">✓</button>
+                        </form>
+                        <form action="/admin/pgs/<%= pg._id %>/reject-listing" method="POST">
+                          <button class="btn btn-sm btn-warning py-0 text-dark" title="Reject">✗</button>
+                        </form>
+                      <% } %>
+                      <form action="/admin/pgs/<%= pg._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this PG?')">
+                        <button class="btn btn-sm btn-outline-danger py-0" title="Delete"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="8" class="text-center py-5 text-muted">No PGs found. <a href="/admin/pgs/new">Add one now!</a></td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+

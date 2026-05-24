@@ -1,0 +1,117 @@
+<% layout("/layouts/boilerplate.ejs") %>
+  <%- include('../partials/navbar') %>
+
+  <div class="page-header">
+    <div class="container">
+      <h1><i class="bi bi-building me-2"></i>Browse PG Accommodations</h1>
+      <p>Find the perfect PG across India's top cities</p>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <%- include('../partials/flash') %>
+    <div class="row g-4">
+      <!-- Filters Sidebar -->
+      <div class="col-lg-3">
+        <div class="filter-card">
+          <h5 class="filter-title"><i class="bi bi-funnel me-2"></i>Filters</h5>
+          <form action="/pgs" method="GET" id="filterForm">
+            <div class="filter-group">
+              <div class="filter-label">🔍 Search</div>
+              <input type="text" name="search" class="form-control" placeholder="City, area..." value="<%= query.search || '' %>">
+            </div>
+            <div class="filter-group">
+              <div class="filter-label">👫 Gender</div>
+              <select name="gender" class="form-select">
+                <option value="">Any</option>
+                <option value="male" <%= query.gender === 'male' ? 'selected' : '' %>>Boys</option>
+                <option value="female" <%= query.gender === 'female' ? 'selected' : '' %>>Girls</option>
+                <option value="co-ed" <%= query.gender === 'co-ed' ? 'selected' : '' %>>Co-ed</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <div class="filter-label">💰 Price Range</div>
+              <div class="row g-2">
+                <div class="col-6"><input type="number" name="minPrice" class="form-control" placeholder="Min" value="<%= query.minPrice || '' %>"></div>
+                <div class="col-6"><input type="number" name="maxPrice" class="form-control" placeholder="Max" value="<%= query.maxPrice || '' %>"></div>
+              </div>
+            </div>
+            <div class="filter-group">
+              <div class="filter-label">🏷️ Amenities</div>
+              <% ['Wi-Fi', 'AC', 'Meals Included', 'Laundry', 'Parking', 'Hot Water', 'TV', 'Security'].forEach(a => { %>
+                <div class="form-check mb-1">
+                  <input class="form-check-input" type="checkbox" name="amenities" value="<%= a %>" id="am-<%= a %>"
+                    <%= (query.amenities && (Array.isArray(query.amenities) ? query.amenities.includes(a) : query.amenities === a)) ? 'checked' : '' %>>
+                  <label class="form-check-label" for="am-<%= a %>"><%= a %></label>
+                </div>
+              <% }) %>
+            </div>
+            <div class="filter-group">
+              <div class="filter-label">↕️ Sort By</div>
+              <select name="sort" class="form-select">
+                <option value="" <%= !query.sort ? 'selected' : '' %>>Newest First</option>
+                <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+                <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+                <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Best Rated</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-fill">Apply</button>
+              <a href="/pgs" class="btn btn-outline-secondary">Reset</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Listings -->
+      <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <p class="mb-0 text-muted"><strong><%= pgs.length %></strong> PGs found</p>
+        </div>
+        <% if (pgs.length > 0) { %>
+          <div class="row g-4">
+            <% pgs.forEach(pg => { %>
+              <div class="col-md-6 col-xl-4">
+                <div class="pg-card">
+                  <div class="pg-card-img">
+                    <img src="<%= pg.images && pg.images.length ? pg.images[0] : 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600' %>" alt="<%= pg.title %>">
+                    <span class="pg-card-badge" style="background: <%= pg.availableRooms > 0 ? 'var(--accent)' : '#EF4444' %>">
+                      <%= pg.availableRooms > 0 ? pg.availableRooms + ' Available' : 'Full' %>
+                    </span>
+                    <span class="pg-card-gender"><%= pg.gender === 'co-ed' ? '👥' : pg.gender === 'male' ? '♂' : '♀' %> <%= pg.gender %></span>
+                  </div>
+                  <div class="pg-card-body">
+                    <h5 class="pg-card-title"><%= pg.title %></h5>
+                    <p class="pg-card-location"><i class="bi bi-geo-alt-fill" style="color:var(--primary)"></i> <%= pg.location %>, <%= pg.city %></p>
+                    <div class="pg-card-amenities">
+                      <% (pg.amenities || []).slice(0,3).forEach(a => { %>
+                        <span class="amenity-tag"><%= a %></span>
+                      <% }) %>
+                    </div>
+                    <div class="pg-card-footer">
+                      <div>
+                        <div class="pg-price">₹<%= pg.price.toLocaleString('en-IN') %> <span>/mo</span></div>
+                        <% if (pg.reviewCount > 0) { %>
+                          <div class="pg-rating mt-1"><i class="bi bi-star-fill"></i> <%= pg.rating %> (<%= pg.reviewCount %>)</div>
+                        <% } %>
+                      </div>
+                      <a href="/pgs/<%= pg._id %>" class="btn btn-primary btn-sm">Details</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="no-results">
+            <div class="icon">🔍</div>
+            <h4>No PGs Found</h4>
+            <p class="text-muted">Try adjusting your search filters</p>
+            <a href="/pgs" class="btn btn-primary mt-2">Clear Filters</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>

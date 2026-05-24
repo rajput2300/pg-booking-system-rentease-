@@ -1,0 +1,57 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<body style="background: linear-gradient(135deg, #1A1F36 0%, #2D3561 100%); min-height: 100vh; display: flex; align-items: center;">
+  <div class="container py-5">
+    <%- include('../partials/flash') %>
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-5">
+        <div class="text-center mb-4">
+          <a href="/" class="text-decoration-none">
+            <span style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; color: white;">🏠 Rent<span style="color: var(--primary);">Ease</span>.in</span>
+          </a>
+          <p class="text-white-50 mt-1">Join 1 Lakh+ students</p>
+        </div>
+        <div class="auth-card">
+          <h2 class="auth-title">Create Account ✨</h2>
+          <p class="text-muted mb-4">Find your perfect PG today</p>
+          <form action="/auth/register" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" name="username" class="form-control" placeholder="Rahul Sharma" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" name="email" class="form-control" placeholder="rahul@example.com" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" name="password" class="form-control" placeholder="Min 6 characters" minlength="6" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-3 fw-700">
+              <i class="bi bi-person-plus me-2"></i>Create Account
+            </button>
+          </form>
+          <hr class="my-4">
+          <p class="text-center mb-0 text-muted">
+            Already have an account? <a href="/auth/login" class="fw-600" style="color: var(--primary);">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+

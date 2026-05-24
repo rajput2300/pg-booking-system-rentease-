@@ -1,0 +1,258 @@
+<% layout("/layouts/boilerplate.ejs") %>
+  <%- include('partials/navbar') %>
+
+  <div class="container-fluid px-0">
+    <%- include('partials/flash') %>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-8">
+          <div class="hero-badge">
+            <span>🇮🇳</span> India's #1 PG Booking Platform
+          </div>
+          <h1 class="hero-title">
+            Find Your <span>Perfect PG</span> — Fast & Easy
+          </h1>
+          <p class="hero-subtitle">Discover verified PG accommodations across India's top cities. Safe, affordable, and just a click away.</p>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="/pgs" class="btn btn-primary btn-lg">Browse PGs <i class="bi bi-arrow-right ms-1"></i></a>
+            <a href="/auth/register-owner"    class="btn btn-outline-primary btn-lg">
+              <i class="bi bi-shop me-1"></i> List Your PG
+            </a>
+          </div>
+          <!-- <div class="hero-stats"> -->
+            <!-- <div class="hero-stat"><div class="number">5000+</div><div class="label">PG Listings</div></div> -->
+            <!-- <div class="hero-stat"><div class="number">50+</div><div class="label">Cities</div></div> -->
+            <!-- <div class="hero-stat"><div class="number">1L+</div><div class="label">Happy Tenants</div></div> -->
+            <!-- <div class="hero-stat"><div class="number">4.8★</div><div class="label">Avg Rating</div></div> -->
+          <!-- </div> -->
+        <!-- </div> -->
+        <!-- <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+          <div class="hero-img-float">
+            <div class="hero-card-mini">
+              <div class="icon">🏠</div>
+              <div class="info">
+                <div class="name">Sunrise PG, Pune</div>
+                <div class="detail">Koregaon Park • Wi-Fi + Meals</div>
+              </div>
+              <div class="price">₹8,500/mo</div>
+            </div>
+            <div class="hero-card-mini">
+              <div class="icon">🏢</div>
+              <div class="info">
+                <div class="name">Urban Nest, Bangalore</div>
+                <div class="detail">Koramangala • AC + Laundry</div>
+              </div>
+              <div class="price">₹12,000/mo</div>
+            </div>
+            <div class="hero-card-mini">
+              <div class="icon">✅</div>
+              <div class="info">
+                <div class="name">Verified & Safe</div>
+                <div class="detail">All listings personally verified</div>
+              </div>
+            </div>
+          </div> -->
+        <!-- </div> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH BAR -->
+  <div class="container">
+    <div class="search-section">
+      <form action="/pgs" method="GET">
+        <div class="row g-3 align-items-end">
+          <div class="col-lg-4">
+            <label class="form-label fw-semibold small mb-1">🔍 Location</label>
+            <input type="text" name="search" class="form-control" placeholder="City, area or PG name...">
+          </div>
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold small mb-1">👫 Gender</label>
+            <select name="gender" class="form-select">
+              <option value="">Any</option>
+              <option value="male">Boys</option>
+              <option value="female">Girls</option>
+              <option value="co-ed">Co-ed</option>
+            </select>
+          </div>
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold small mb-1">💰 Max Budget</label>
+            <select name="maxPrice" class="form-select">
+              <option value="">Any budget</option>
+              <option value="5000">Under ₹5,000</option>
+              <option value="8000">Under ₹8,000</option>
+              <option value="12000">Under ₹12,000</option>
+              <option value="20000">Under ₹20,000</option>
+            </select>
+          </div>
+          <div class="col-lg-2">
+            <button type="submit" class="btn btn-search w-100">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FEATURED PGs -->
+  <section class="py-5 mt-4">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label"><i class="bi bi-star-fill"></i> Featured Listings</div>
+        <h2 class="section-title">Handpicked PG Accommodations</h2>
+        <p class="section-subtitle">Verified listings with top-rated amenities across India's major cities</p>
+      </div>
+      <% if (featured.length > 0) { %>
+        <div class="row g-4">
+          <% featured.forEach(pg => { %>
+            <div class="col-md-6 col-lg-4">
+              <div class="pg-card">
+                <div class="pg-card-img">
+                  <img src="<%= pg.images && pg.images.length ? pg.images[0] : 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600' %>" alt="<%= pg.title %>">
+                  <% if (pg.availableRooms > 0) { %>
+                    <span class="pg-card-badge"><%= pg.availableRooms %> Rooms Available</span>
+                  <% } else { %>
+                    <span class="pg-card-badge" style="background: #EF4444">No Vacancy</span>
+                  <% } %>
+                  <span class="pg-card-gender"><%= pg.gender === 'co-ed' ? '👥 Co-ed' : pg.gender === 'male' ? '♂ Boys' : '♀ Girls' %></span>
+                </div>
+                <div class="pg-card-body">
+                  <h5 class="pg-card-title"><%= pg.title %></h5>
+                  <p class="pg-card-location"><i class="bi bi-geo-alt-fill" style="color: var(--primary)"></i> <%= pg.location %>, <%= pg.city %></p>
+                  <div class="pg-card-amenities">
+                    <% (pg.amenities || []).slice(0,3).forEach(a => { %>
+                      <span class="amenity-tag"><%= a %></span>
+                    <% }) %>
+                    <% if ((pg.amenities || []).length > 3) { %><span class="amenity-tag">+<%= pg.amenities.length - 3 %> more</span><% } %>
+                  </div>
+                  <div class="pg-card-footer">
+                    <div>
+                      <div class="pg-price">₹<%= pg.price.toLocaleString('en-IN') %> <span>/month</span></div>
+                      <% if (pg.reviewCount > 0) { %>
+                        <div class="pg-rating mt-1"><i class="bi bi-star-fill"></i> <%= pg.rating %> (<%= pg.reviewCount %> reviews)</div>
+                      <% } %>
+                    </div>
+                    <a href="/pgs/<%= pg._id %>" class="btn btn-primary btn-sm">View Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+        <div class="text-center mt-5">
+          <a href="/pgs" class="btn btn-outline-primary btn-lg">
+            Browse All PGs <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      <% } else { %>
+        <div class="no-results">
+          <div class="icon">🏠</div>
+          <h4>No featured listings yet</h4>
+          <p class="text-muted">Check back soon or browse all available PGs.</p>
+          <a href="/pgs" class="btn btn-primary mt-2">Browse All PGs</a>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- WHY RENTEASE -->
+  <section class="py-5 why-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label"><i class="bi bi-shield-check"></i> Why RentEase?</div>
+        <h2 class="section-title">The Smarter Way to Find a PG</h2>
+        <p class="section-subtitle">We make finding your next home away from home simple, safe, and stress-free</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h5 class="feature-title">Verified Listings</h5>
+            <p class="text-muted small">Every PG is personally verified by our team before going live on the platform.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h5 class="feature-title">Instant Booking</h5>
+            <p class="text-muted small">Book your preferred room in minutes. No lengthy paperwork or middlemen.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h5 class="feature-title">Real Reviews</h5>
+            <p class="text-muted small">Read honest reviews from actual tenants to make informed decisions.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h5 class="feature-title">Secure & Safe</h5>
+            <p class="text-muted small">Your data and payments are fully secured with industry-grade encryption.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POPULAR CITIES -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label"><i class="bi bi-map"></i> Explore Cities</div>
+        <h2 class="section-title">PGs Across India</h2>
+      </div>
+      <div class="row g-3">
+        <% const citiesData = [
+          { name: 'Pune', img: 'https://images.unsplash.com/photo-1570458436416-b8fcccfe883f?w=400' },
+          { name: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=400' },
+          { name: 'Mumbai', img: 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=400' },
+          { name: 'Delhi', img: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400' },
+          { name: 'Hyderabad', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400' },
+          { name: 'Chennai', img: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400' }
+        ]; %>
+        <% citiesData.forEach(city => { %>
+          <div class="col-6 col-md-4 col-lg-2">
+            <a href="/pgs?search=<%= city.name %>" class="text-decoration-none">
+              <div class="city-card">
+                <img src="<%= city.img %>" class="city-card-bg" alt="<%= city.name %>">
+                <div class="city-card-overlay">
+                  <div class="city-card-name"><%= city.name %></div>
+                  <div class="city-card-count">View PGs</div>
+                </div>
+              </div>
+            </a>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <div style="background: linear-gradient(135deg, var(--secondary), #2D3561); border-radius: 24px; padding: 60px 40px; text-align: center; position: relative; overflow: hidden;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 800; color: white; margin-bottom: 16px;">Ready to Find Your Home?</h2>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 32px;">Join 1 lakh+ students who found their perfect PG on RentEase.in</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="/pgs" class="btn btn-primary btn-lg">Browse PGs <i class="bi bi-arrow-right ms-1"></i></a>
+              <% if (!currentUser) { %>
+                <a href="/auth/register" class="btn btn-lg" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">Create Account</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+

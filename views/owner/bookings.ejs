@@ -1,0 +1,116 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/owner-sidebar', { activePage: 'bookings' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+    <div class="admin-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h1>My Bookings</h1>
+        <p class="text-muted mb-0"><%= bookings.length %> total booking requests</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <% ['', 'pending', 'approved', 'rejected', 'cancelled'].forEach(s => { %>
+          <a href="/owner/bookings<%= s ? '?status='+s : '' %>" class="btn btn-sm <%= filterStatus === s ? 'btn-primary' : 'btn-outline-secondary' %>">
+            <%= s || 'All' %>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <% if (bookings.length > 0) { %>
+      <div class="admin-table">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr><th>Guest</th><th>PG</th><th>Check-In</th><th>Duration</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(b => { %>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm" style="width:32px;height:32px;font-size:0.85rem;flex-shrink:0"><%= b.user?.username?.charAt(0).toUpperCase() %></div>
+                    <div>
+                      <div class="fw-600 small"><%= b.user?.username %></div>
+                      <div class="text-muted" style="font-size:0.72rem"><%= b.user?.phone || b.user?.email %></div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="fw-500 small"><%= b.pg?.title?.substring(0,25) %></div>
+                  <div class="text-muted" style="font-size:0.72rem"><%= b.pg?.city %></div>
+                </td>
+                <td><span class="small"><%= b.checkIn?.toLocaleDateString('en-IN') %></span></td>
+                <td><span class="small"><%= b.duration %> mo.</span></td>
+                <td><span class="fw-700 text-primary small">₹<%= b.totalAmount?.toLocaleString('en-IN') %></span></td>
+                <td>
+                  <span class="badge" style="background:<%= b.status==='approved'?'#D1FAE5':b.status==='pending'?'#FEF3C7':b.status==='rejected'?'#FEE2E2':'#F3F4F6' %>;color:<%= b.status==='approved'?'#065F46':b.status==='pending'?'#92400E':b.status==='rejected'?'#991B1B':'#6B7280' %>;border-radius:100px;padding:4px 10px;font-size:0.73rem">
+                    <%= b.status %>
+                  </span>
+                </td>
+                <td>
+                  <% if (b.status === 'pending') { %>
+                    <div class="d-flex gap-1">
+                      <button class="btn btn-sm btn-success py-0" data-bs-toggle="modal" data-bs-target="#approveModal-<%= b._id %>">Approve</button>
+                      <button class="btn btn-sm btn-danger py-0" data-bs-toggle="modal" data-bs-target="#rejectModal-<%= b._id %>">Reject</button>
+                    </div>
+                    <!-- Approve Modal -->
+                    <div class="modal fade" id="approveModal-<%= b._id %>" tabindex="-1">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header"><h5 class="modal-title fw-700">Approve Booking</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                          <form action="/owner/bookings/<%= b._id %>/approve" method="POST">
+                            <div class="modal-body">
+                              <p class="small text-muted">Guest: <strong><%= b.user?.username %></strong><br>Check-in: <strong><%= b.checkIn?.toLocaleDateString('en-IN') %></strong></p>
+                              <label class="form-label small fw-600">Note to guest (optional)</label>
+                              <input type="text" name="note" class="form-control" placeholder="Your booking is confirmed!">
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-success w-100">Confirm Approve</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Reject Modal -->
+                    <div class="modal fade" id="rejectModal-<%= b._id %>" tabindex="-1">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header"><h5 class="modal-title fw-700">Reject Booking</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                          <form action="/owner/bookings/<%= b._id %>/reject" method="POST">
+                            <div class="modal-body">
+                              <label class="form-label small fw-600">Reason for rejection</label>
+                              <input type="text" name="note" class="form-control" placeholder="Room not available...">
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-danger w-100">Confirm Reject</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  <% } else if (b.message) { %>
+                    <button class="btn btn-sm btn-outline-secondary py-0" data-bs-toggle="tooltip" title="<%= b.message %>">
+                      <i class="bi bi-chat-text"></i>
+                    </button>
+                  <% } else { %>
+                    <span class="text-muted small">—</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="no-results">
+        <div class="icon">📋</div>
+        <h4>No Bookings Yet</h4>
+        <p class="text-muted">Bookings for your PGs will appear here.</p>
+        <a href="/owner/my-pgs" class="btn btn-primary mt-2">View My PGs</a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));</script>
+>

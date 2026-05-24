@@ -1,0 +1,49 @@
+<body>
+<footer class="footer mt-auto">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <h5 class="footer-brand">🏠 Rent<span class="brand-accent">Ease</span>.in</h5>
+        <p class="text-muted small">India's trusted platform for finding and booking quality PG accommodations. Making student housing easy, safe, and affordable.</p>
+        <div class="social-links d-flex gap-3 mt-3">
+          <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Quick Links</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="/pgs">Browse PGs</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">For Tenants</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="/auth/register">Register</a></li>
+          <li><a href="/bookings/my">My Bookings</a></li>
+          <li><a href="/pgs">Find PG</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6 class="footer-heading">Popular Cities</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <% ['Pune', 'Mumbai', 'Bangalore', 'Delhi', 'Hyderabad', 'Chennai'].forEach(city => { %>
+            <a href="/pgs?search=<%= city %>" class="badge-city"><%= city %></a>
+          <% }) %>
+        </div>
+        <p class="text-muted small mt-3"><i class="bi bi-telephone me-1"></i>+91 98765 43210<br>
+        <i class="bi bi-envelope me-1"></i>hello@rentease.in</p>
+      </div>
+    </div>
+    <hr class="footer-hr">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <p class="mb-0 text-muted small">© 2024 RentEase.in. All rights reserved.</p>
+      <p class="mb-0 text-muted small" style="color: white;">Made with ❤️ for Indian students</p>
+    </div>
+  </div>
+</footer>
+</body>

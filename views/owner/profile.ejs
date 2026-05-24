@@ -1,0 +1,61 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/owner-sidebar', { activePage: 'profile' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+    <div class="admin-header"><h1>My Profile</h1><p class="text-muted">Your owner account details</p></div>
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <div class="stat-card">
+          <div class="text-center mb-4 pb-4" style="border-bottom: 1px solid var(--border)">
+            <div style="width:80px;height:80px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;margin:0 auto 14px">
+              <%= owner.username.charAt(0).toUpperCase() %>
+            </div>
+            <h4 class="fw-800"><%= owner.username %></h4>
+            <p class="text-muted mb-2"><%= owner.email %></p>
+            <% if (owner.businessName) { %><p class="text-muted small"><i class="bi bi-shop me-1"></i><%= owner.businessName %></p><% } %>
+            <span class="badge" style="background: <%= owner.ownerApproved ? '#D1FAE5' : '#FEF3C7' %>; color: <%= owner.ownerApproved ? '#065F46' : '#92400E' %>; border-radius: 100px; padding: 6px 14px; font-size: 0.82rem;">
+              <%= owner.ownerApproved ? '✅ Verified Owner' : '⏳ Pending Approval' %>
+            </span>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input class="form-control" value="<%= owner.username %>" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input class="form-control" value="<%= owner.email %>" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input class="form-control" value="<%= owner.phone || 'Not provided' %>" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Business Name</label>
+              <input class="form-control" value="<%= owner.businessName || '—' %>" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Role</label>
+              <input class="form-control" value="PG Owner" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Member Since</label>
+              <input class="form-control" value="<%= owner.createdAt.toLocaleDateString('en-IN', { year:'numeric', month:'long' }) %>" disabled>
+            </div>
+          </div>
+
+          <hr class="my-4">
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="/contact" class="btn btn-outline-primary"><i class="bi bi-headset me-1"></i> Contact Support</a>
+            <form action="/auth/logout" method="POST">
+              <button class="btn btn-outline-danger"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

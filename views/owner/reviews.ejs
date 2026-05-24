@@ -1,0 +1,45 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/owner-sidebar', { activePage: 'reviews' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+    <div class="admin-header">
+      <h1>Reviews on My PGs</h1>
+      <p class="text-muted"><%= reviews.length %> total review<%= reviews.length !== 1 ? 's' : '' %></p>
+    </div>
+
+    <% if (reviews.length > 0) { %>
+      <div class="row g-4">
+        <% reviews.forEach(r => { %>
+          <div class="col-lg-6">
+            <div class="stat-card">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="review-avatar"><%= r.user?.username?.charAt(0).toUpperCase() %></div>
+                  <div>
+                    <div class="fw-700 small"><%= r.user?.username %></div>
+                    <div class="text-muted" style="font-size:0.73rem"><%= r.createdAt.toLocaleDateString('en-IN') %></div>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div style="color: #F59E0B;">
+                    <% for(let i=1;i<=5;i++) { %><i class="bi bi-star<%= i <= r.rating ? '-fill' : '' %>" style="font-size:0.85rem"></i><% } %>
+                  </div>
+                  <div style="font-size:0.73rem;color:var(--text-muted)">for <strong><%= r.pg?.title?.substring(0,20) %>...</strong></div>
+                </div>
+              </div>
+              <p class="text-muted mb-0" style="font-size:0.92rem;line-height:1.7"><%= r.comment %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="no-results">
+        <div class="icon">⭐</div>
+        <h4>No Reviews Yet</h4>
+        <p class="text-muted">Reviews from tenants will appear here once they start booking and rating your PGs.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+

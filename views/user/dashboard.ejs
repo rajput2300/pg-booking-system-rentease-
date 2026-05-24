@@ -1,0 +1,173 @@
+<% layout("../layouts/boilerplate.ejs") %>
+  <%- include('../partials/navbar') %>
+
+  <div class="page-header">
+    <div class="container">
+      <div class="d-flex align-items-center gap-4">
+        <div class="avatar-sm" style="width:60px;height:60px;font-size:1.6rem;background:var(--primary);flex-shrink:0">
+          <%= currentUser.username.charAt(0).toUpperCase() %>
+        </div>
+        <div>
+          <h1 style="margin-bottom:4px">My Dashboard</h1>
+          <p style="color:rgba(255,255,255,0.7);margin:0"><%= user.email %> · Member since <%= new Date(user.createdAt).toLocaleDateString('en-IN', {month:'long', year:'numeric'}) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <%- include('../partials/flash') %>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#EFF6FF"><i class="bi bi-calendar-check" style="color:#3B82F6"></i></div>
+          <div class="stat-value"><%= stats.totalBookings %></div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#F0FDF4"><i class="bi bi-check-circle" style="color:#22C55E"></i></div>
+          <div class="stat-value"><%= stats.activeBookings %></div>
+          <div class="stat-label">Active Stays</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#FFF7ED"><i class="bi bi-star" style="color:#F97316"></i></div>
+          <div class="stat-value"><%= stats.totalReviews %></div>
+          <div class="stat-label">Reviews Written</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#FFF0EB"><i class="bi bi-heart" style="color:var(--primary)"></i></div>
+          <div class="stat-value"><%= stats.wishlistCount %></div>
+          <div class="stat-label">Saved PGs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Recent Bookings -->
+      <div class="col-lg-8">
+        <div class="admin-table">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-700 mb-0"><i class="bi bi-calendar-check me-2" style="color:var(--primary)"></i>Recent Bookings</h6>
+            <a href="/bookings/my" class="btn btn-sm btn-outline-primary">View All</a>
+          </div>
+          <% if (bookings.length > 0) { %>
+            <div class="p-3">
+              <% bookings.forEach(b => { %>
+                <div class="d-flex gap-3 align-items-center p-3 mb-2" style="background:var(--bg-light);border-radius:12px;border:1px solid var(--border)">
+                  <img src="<%= b.pg?.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=100' %>"
+                    style="width:56px;height:56px;object-fit:cover;border-radius:10px;flex-shrink:0" alt="">
+                  <div class="flex-grow-1">
+                    <div class="fw-700 small"><%= b.pg?.title || 'PG Deleted' %></div>
+                    <div class="text-muted" style="font-size:0.78rem"><i class="bi bi-geo-alt-fill" style="color:var(--primary)"></i> <%= b.pg?.city %> · Check-in: <%= b.checkIn?.toLocaleDateString('en-IN') %></div>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-700 text-primary small">₹<%= b.totalAmount?.toLocaleString('en-IN') %></div>
+                    <span class="badge" style="background:<%= b.status==='approved'?'#D1FAE5':b.status==='pending'?'#FEF3C7':'#FEE2E2' %>;color:<%= b.status==='approved'?'#065F46':b.status==='pending'?'#92400E':'#991B1B' %>;border-radius:100px;padding:3px 8px;font-size:0.7rem">
+                      <%= b.status %>
+                    </span>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-calendar-x" style="font-size:2.5rem;opacity:0.3"></i>
+              <p class="mt-2">No bookings yet. <a href="/pgs">Find a PG</a></p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="admin-table mt-4">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-700 mb-0"><i class="bi bi-heart me-2" style="color:var(--primary)"></i>My Wishlist</h6>
+            <a href="/pgs" class="btn btn-sm btn-outline-primary">Browse PGs</a>
+          </div>
+          <% if (wishlist.length > 0) { %>
+            <div class="p-3">
+              <div class="row g-3">
+                <% wishlist.forEach(pg => { %>
+                  <div class="col-md-6">
+                    <div class="d-flex gap-3 align-items-center p-2" style="background:var(--bg-light);border-radius:12px;border:1px solid var(--border)">
+                      <img src="<%= pg.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=100' %>"
+                        style="width:50px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0" alt="">
+                      <div class="flex-grow-1 overflow-hidden">
+                        <div class="fw-700 small text-truncate"><%= pg.title %></div>
+                        <div class="text-muted" style="font-size:0.75rem"><%= pg.location %>, <%= pg.city %></div>
+                        <div class="fw-700 text-primary" style="font-size:0.85rem">₹<%= pg.price?.toLocaleString('en-IN') %>/mo</div>
+                      </div>
+                      <a href="/pgs/<%= pg._id %>" class="btn btn-sm btn-primary py-0 px-2">View</a>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-heart" style="font-size:2.5rem;opacity:0.3"></i>
+              <p class="mt-2">No saved PGs yet. Click ♥ on any PG to save it!</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <!-- Profile Card -->
+        <div class="stat-card mb-4">
+          <h6 class="fw-700 mb-4">👤 My Profile</h6>
+          <div class="d-flex flex-column gap-3">
+            <div>
+              <div class="text-muted small fw-600 mb-1">FULL NAME</div>
+              <div class="fw-600"><%= user.username %></div>
+            </div>
+            <div>
+              <div class="text-muted small fw-600 mb-1">EMAIL</div>
+              <div class="fw-600 small"><%= user.email %></div>
+            </div>
+            <div>
+              <div class="text-muted small fw-600 mb-1">PHONE</div>
+              <div class="fw-600 small"><%= user.phone || '—' %></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="stat-card mb-4">
+          <h6 class="fw-700 mb-4">⚡ Quick Actions</h6>
+          <div class="d-flex flex-column gap-2">
+            <a href="/pgs" class="btn btn-primary"><i class="bi bi-search me-2"></i>Browse PGs</a>
+            <a href="/bookings/my" class="btn btn-outline-primary"><i class="bi bi-calendar-check me-2"></i>My Bookings</a>
+            <a href="/contact" class="btn btn-outline-secondary"><i class="bi bi-flag me-2"></i>File a Complaint</a>
+          </div>
+        </div>
+
+        <!-- Recent Reviews -->
+        <% if (reviews.length > 0) { %>
+          <div class="stat-card">
+            <h6 class="fw-700 mb-3">⭐ My Reviews</h6>
+            <% reviews.slice(0,3).forEach(r => { %>
+              <div class="mb-3 pb-3" style="border-bottom:1px solid var(--border)">
+                <div class="fw-600 small"><%= r.pg?.title %></div>
+                <div class="star-rating small">
+                  <% for(let i=1;i<=5;i++) { %><i class="bi bi-star<%= i<=r.rating?'-fill':'' %>"></i><% } %>
+                </div>
+                <div class="text-muted" style="font-size:0.8rem"><%= r.comment.substring(0,80) %><%= r.comment.length>80?'...':'' %></div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+

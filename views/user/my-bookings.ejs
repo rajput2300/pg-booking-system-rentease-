@@ -1,0 +1,70 @@
+<% layout("/layouts/boilerplate.ejs") %>
+  <%- include('../partials/navbar') %>
+
+  <div class="page-header">
+    <div class="container">
+      <h1><i class="bi bi-calendar-check me-2"></i>My Bookings</h1>
+      <p>Track and manage all your PG booking requests</p>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <%- include('../partials/flash') %>
+    <% if (bookings.length > 0) { %>
+      <div class="row g-4">
+        <% bookings.forEach(b => { %>
+          <div class="col-lg-6">
+            <div class="pg-card" style="height: auto;">
+              <div class="pg-card-img" style="height: 160px;">
+                <img src="<%= b.pg?.images?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600' %>" alt="">
+                <span class="pg-card-badge badge-status-<%= b.status %>" style="background: <%= b.status === 'approved' ? 'var(--accent)' : b.status === 'pending' ? '#F59E0B' : b.status === 'rejected' ? '#EF4444' : '#9CA3AF' %>">
+                  <%= b.status.toUpperCase() %>
+                </span>
+              </div>
+              <div class="pg-card-body">
+                <h5 class="pg-card-title"><%= b.pg?.title || 'PG Deleted' %></h5>
+                <p class="pg-card-location"><i class="bi bi-geo-alt-fill" style="color:var(--primary)"></i> <%= b.pg?.city %></p>
+                <div class="row g-2 mb-3 text-center">
+                  <div class="col-4" style="background: var(--bg-light); border-radius: 8px; padding: 8px 4px;">
+                    <div class="fw-700 small"><%= b.checkIn?.toLocaleDateString('en-IN') %></div>
+                    <div class="text-muted" style="font-size: 0.7rem;">Check-In</div>
+                  </div>
+                  <div class="col-4" style="background: var(--bg-light); border-radius: 8px; padding: 8px 4px;">
+                    <div class="fw-700 small"><%= b.duration %> mo.</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">Duration</div>
+                  </div>
+                  <div class="col-4" style="background: var(--primary-light); border-radius: 8px; padding: 8px 4px;">
+                    <div class="fw-700 small text-primary">₹<%= b.totalAmount?.toLocaleString('en-IN') %></div>
+                    <div class="text-muted" style="font-size: 0.7rem;">Total</div>
+                  </div>
+                </div>
+                <% if (b.adminNote) { %>
+                  <div class="alert alert-info py-2 mb-2 small"><i class="bi bi-info-circle me-1"></i><strong>Admin:</strong> <%= b.adminNote %></div>
+                <% } %>
+                <div class="d-flex gap-2">
+                  <% if (b.pg) { %>
+                    <a href="/pgs/<%= b.pg._id %>" class="btn btn-outline-primary btn-sm flex-fill">View PG</a>
+                  <% } %>
+                  <% if (b.status === 'pending') { %>
+                    <form action="/bookings/<%= b._id %>/cancel" method="POST">
+                      <button class="btn btn-outline-danger btn-sm" onclick="return confirm('Cancel this booking?')">Cancel</button>
+                    </form>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="no-results">
+        <div class="icon">📋</div>
+        <h4>No Bookings Yet</h4>
+        <p class="text-muted">You haven't made any booking requests.</p>
+        <a href="/pgs" class="btn btn-primary mt-2">Find a PG</a>
+      </div>
+    <% } %>
+  </div>
+
+  <%- include('../partials/footer') %>
+

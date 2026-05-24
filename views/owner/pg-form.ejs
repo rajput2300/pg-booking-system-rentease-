@@ -1,0 +1,223 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/owner-sidebar', { activePage: pg ? 'my-pgs' : 'add-pg' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+    <div class="admin-header">
+      <h1><%= pg ? '✏️ Edit PG Listing' : '➕ Add New PG Listing' %></h1>
+      <p class="text-muted"><%= pg ? 'Update your PG details — it will go back for admin review.' : 'Fill in the details below. Your listing will go live after admin review (within 24 hours).' %></p>
+    </div>
+
+    <!-- Review notice -->
+    <div class="alert d-flex align-items-center gap-3 mb-4" style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 14px;">
+      <i class="bi bi-info-circle-fill" style="color: #3B82F6; font-size: 1.3rem; flex-shrink: 0;"></i>
+      <div class="small">
+        <strong>How it works:</strong> After you submit, our admin team reviews your listing within 24 hours to ensure quality and accuracy. Once approved, it goes live for students to discover and book.
+      </div>
+    </div>
+
+    <form action="<%= pg ? '/owner/pgs/' + pg._id + '?_method=PUT' : '/owner/pgs' %>" method="POST" enctype="multipart/form-data">
+      <div class="row g-4">
+        <!-- LEFT -->
+        <div class="col-lg-8">
+
+          <!-- Basic Info -->
+          <div class="stat-card mb-4">
+            <h6 class="fw-700 mb-4"><i class="bi bi-info-circle me-2" style="color:var(--primary)"></i>Basic Information</h6>
+            <div class="mb-3">
+              <label class="form-label">PG Title *</label>
+              <input type="text" name="title" class="form-control" placeholder="e.g. Sunrise PG for Boys - Koregaon Park" required value="<%= pg?.title || '' %>">
+              <div class="form-text">Use a clear, descriptive title that includes your area name</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description *</label>
+              <textarea name="description" class="form-control" rows="5" placeholder="Describe your PG in detail — highlight what makes it special, nearby landmarks, colleges, offices, etc." required><%= pg?.description || '' %></textarea>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">City *</label>
+                <input type="text" name="city" class="form-control" placeholder="e.g. Pune" required value="<%= pg?.city || '' %>">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Locality / Area *</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Koregaon Park" required value="<%= pg?.location || '' %>">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Full Address *</label>
+                <input type="text" name="address" class="form-control" placeholder="House no., street, landmarks — the more detail the better" required value="<%= pg?.address || '' %>">
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing & Rooms -->
+          <div class="stat-card mb-4">
+            <h6 class="fw-700 mb-4"><i class="bi bi-currency-rupee me-2" style="color:var(--primary)"></i>Pricing & Room Details</h6>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Rent Amount (₹) *</label>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  <input type="number" name="price" class="form-control" placeholder="8500" required value="<%= pg?.price || '' %>" min="1000">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Billing Cycle</label>
+                <select name="priceType" class="form-select">
+                  <option value="monthly" <%= pg?.priceType !== 'daily' ? 'selected' : '' %>>Monthly</option>
+                  <option value="daily" <%= pg?.priceType === 'daily' ? 'selected' : '' %>>Daily</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">For Gender *</label>
+                <select name="gender" class="form-select" required>
+                  <option value="" <%= !pg?.gender ? 'selected' : '' %>>Select...</option>
+                  <option value="male" <%= pg?.gender === 'male' ? 'selected' : '' %>>Boys Only</option>
+                  <option value="female" <%= pg?.gender === 'female' ? 'selected' : '' %>>Girls Only</option>
+                  <option value="co-ed" <%= pg?.gender === 'co-ed' ? 'selected' : '' %>>Co-ed</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Total Rooms</label>
+                <input type="number" name="totalRooms" class="form-control" value="<%= pg?.totalRooms || 1 %>" min="1">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Currently Available Rooms</label>
+                <input type="number" name="availableRooms" class="form-control" value="<%= pg?.availableRooms || 1 %>" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenities -->
+          <div class="stat-card mb-4">
+            <h6 class="fw-700 mb-4"><i class="bi bi-check2-all me-2" style="color:var(--primary)"></i>Amenities Provided</h6>
+            <p class="text-muted small mb-3">Select all amenities your PG offers. More amenities = more bookings!</p>
+            <div class="row g-2">
+              <% ['Wi-Fi', 'AC', 'Meals Included', 'Laundry', 'Parking', 'Hot Water', 'TV', 'Security Guard', 'CCTV', 'Gym', 'Housekeeping', 'Power Backup', 'Study Room', 'Fridge', 'Water Purifier'].forEach(a => { %>
+                <div class="col-6 col-md-4">
+                  <div class="form-check" style="padding: 8px 12px; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <input class="form-check-input" type="checkbox" name="amenities" value="<%= a %>" id="am-<%= a.replace(/ /g,'_') %>"
+                      <%= pg?.amenities?.includes(a) ? 'checked' : '' %>>
+                    <label class="form-check-label small fw-500" for="am-<%= a.replace(/ /g,'_') %>"><%= a %></label>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- House Rules -->
+          <div class="stat-card">
+            <h6 class="fw-700 mb-4"><i class="bi bi-list-check me-2" style="color:var(--primary)"></i>House Rules</h6>
+            <div id="rules-container">
+              <% (pg?.rules?.length ? pg.rules : ['No smoking', 'Gate closes at 11 PM']).forEach(rule => { %>
+                <div class="input-group mb-2">
+                  <span class="input-group-text bg-light"><i class="bi bi-dot"></i></span>
+                  <input type="text" name="rules" class="form-control" value="<%= rule %>" placeholder="e.g. No alcohol">
+                  <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>
+                </div>
+              <% }) %>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addRule()">
+              <i class="bi bi-plus me-1"></i>Add Rule
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-lg-4">
+
+          <!-- Images -->
+          <div class="stat-card mb-4">
+            <h6 class="fw-700 mb-3"><i class="bi bi-images me-2" style="color:var(--primary)"></i>Photos</h6>
+            <p class="text-muted small mb-3">Upload up to 8 high-quality photos. Cover image will be shown first. Good photos attract 3x more bookings!</p>
+            <input type="file" name="images" class="form-control mb-2" multiple accept="image/*" id="imgInput">
+            <div class="form-text mb-3">JPG/PNG/WebP, max 5MB each</div>
+
+            <!-- Image preview -->
+            <div id="imgPreview" class="row g-2 mb-3"></div>
+
+            <% if (pg?.images?.length) { %>
+              <div class="mt-2">
+                <label class="form-label small text-muted fw-600">Current Photos</label>
+                <div class="row g-2">
+                  <% pg.images.forEach((img, i) => { %>
+                    <div class="col-6">
+                      <div style="position:relative">
+                        <img src="<%= img %>" style="width:100%;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+                        <% if (i === 0) { %><span style="position:absolute;top:4px;left:4px;background:var(--primary);color:white;font-size:0.65rem;padding:2px 6px;border-radius:4px;font-weight:700">COVER</span><% } %>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Checklist -->
+          <div class="stat-card mb-4" style="background: linear-gradient(135deg, var(--primary-light), white); border: 1px solid rgba(255,107,53,0.2);">
+            <h6 class="fw-700 mb-3" style="color: var(--primary);">✅ Before You Submit</h6>
+            <div class="d-flex flex-column gap-2">
+              <% [
+                'Added a clear, descriptive title',
+                'Wrote a detailed description',
+                'Set correct price',
+                'Chose the right gender type',
+                'Selected all available amenities',
+                'Added house rules',
+                'Uploaded at least 3 photos'
+              ].forEach(item => { %>
+                <label class="d-flex align-items-center gap-2 small" style="cursor:pointer">
+                  <input type="checkbox" style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0">
+                  <span><%= item %></span>
+                </label>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-flex flex-column gap-2">
+            <button type="submit" class="btn btn-primary py-3 fw-700">
+              <i class="bi bi-send me-2"></i><%= pg ? 'Update & Resubmit for Review' : 'Submit for Admin Review' %>
+            </button>
+            <a href="/owner/my-pgs" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+
+          <div class="text-center mt-3">
+            <p class="text-muted small"><i class="bi bi-clock me-1"></i>Admin review takes up to 24 hours</p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function addRule() {
+    const c = document.getElementById('rules-container');
+    const d = document.createElement('div');
+    d.className = 'input-group mb-2';
+    d.innerHTML = `<span class="input-group-text bg-light"><i class="bi bi-dot"></i></span>
+      <input type="text" name="rules" class="form-control" placeholder="e.g. No alcohol">
+      <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`;
+    c.appendChild(d);
+  }
+
+  // Image preview
+  document.getElementById('imgInput')?.addEventListener('change', function() {
+    const preview = document.getElementById('imgPreview');
+    preview.innerHTML = '';
+    Array.from(this.files).slice(0, 8).forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const col = document.createElement('div');
+        col.className = 'col-6';
+        col.innerHTML = `<div style="position:relative">
+          <img src="${e.target.result}" style="width:100%;height:75px;object-fit:cover;border-radius:8px;border:2px solid var(--primary)">
+          ${i === 0 ? '<span style="position:absolute;top:4px;left:4px;background:var(--primary);color:white;font-size:0.62rem;padding:2px 6px;border-radius:4px;font-weight:700">COVER</span>' : ''}
+        </div>`;
+        preview.appendChild(col);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+</script>
+

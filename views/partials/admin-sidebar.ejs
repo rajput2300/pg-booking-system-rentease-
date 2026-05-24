@@ -1,0 +1,42 @@
+
+<div class="admin-sidebar">
+  <div class="sidebar-brand">🏠 Rent<span style="color:var(--primary)">Ease</span>.in<br><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);font-family:sans-serif;font-weight:400">Admin Panel</span></div>
+
+  <div class="sidebar-section-label">Overview</div>
+  <ul class="sidebar-nav">
+    <li><a href="/admin/dashboard" class="sidebar-link <%= activePage==='dashboard'?'active':'' %>">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a></li>
+  </ul>
+
+  <div class="sidebar-section-label">Management</div>
+  <ul class="sidebar-nav">
+    <li><a href="/admin/pgs" class="sidebar-link <%= activePage==='pgs'?'active':'' %>">
+      <i class="bi bi-building"></i> PG Listings
+    </a></li>
+    <li><a href="/admin/bookings" class="sidebar-link <%= activePage==='bookings'?'active':'' %>">
+      <i class="bi bi-calendar-check"></i> Bookings
+    </a></li>
+    <li><a href="/admin/owners" class="sidebar-link <%= activePage==='owners'?'active':'' %>">
+      <i class="bi bi-shop"></i> Owners
+    </a></li>
+    <li><a href="/admin/users" class="sidebar-link <%= activePage==='users'?'active':'' %>">
+      <i class="bi bi-people"></i> Users
+    </a></li>
+    <li><a href="/admin/complaints" class="sidebar-link <%= activePage==='complaints'?'active':'' %>">
+      <i class="bi bi-exclamation-triangle"></i> Complaints
+    </a></li>
+  </ul>
+
+  <div class="sidebar-section-label">Account</div>
+  <ul class="sidebar-nav">
+    <li><a href="/" class="sidebar-link"><i class="bi bi-house"></i> View Site</a></li>
+    <li>
+      <form action="/auth/logout" method="POST">
+        <button class="sidebar-link w-100 bg-transparent border-0 text-start" style="cursor:pointer">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </form>
+    </li>
+  </ul>
+</div>

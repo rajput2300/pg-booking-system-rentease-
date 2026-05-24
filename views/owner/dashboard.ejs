@@ -1,0 +1,119 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/owner-sidebar', { activePage: 'dashboard' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+
+    <% if (!owner.ownerApproved) { %>
+      <div class="alert alert-warning d-flex align-items-center gap-3 mb-4" style="border-radius: 16px; border: none; background: #FEF3C7;">
+        <i class="bi bi-hourglass-split" style="font-size: 1.8rem; color: #D97706;"></i>
+        <div>
+          <div class="fw-700" style="color: #92400E;">Your Owner Account is Under Review</div>
+          <div class="small text-muted">Our admin team will approve your account within 24 hours. You'll receive access to list your PGs once approved. Meanwhile, you can explore the dashboard.</div>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="admin-header d-flex justify-content-between align-items-center">
+      <div>
+        <h1>Owner Dashboard</h1>
+        <p class="text-muted mb-0">Welcome back, <%= owner.username %>! <% if (owner.businessName) { %> · <strong><%= owner.businessName %></strong><% } %></p>
+      </div>
+      <% if (owner.ownerApproved) { %>
+        <a href="/owner/pgs/new" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Add New PG</a>
+      <% } %>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-5">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #EFF6FF;"><i class="bi bi-building" style="color: #3B82F6;"></i></div>
+          <div class="stat-value"><%= stats.totalPGs %></div>
+          <div class="stat-label">Total Listings</div>
+          <% if (stats.pendingPGs > 0) { %><span class="badge bg-warning text-dark mt-1" style="font-size: 0.72rem;"><%= stats.pendingPGs %> pending review</span><% } %>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #F0FDF4;"><i class="bi bi-check-circle" style="color: #22C55E;"></i></div>
+          <div class="stat-value"><%= stats.activePGs %></div>
+          <div class="stat-label">Active Listings</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #FFF7ED;"><i class="bi bi-calendar-check" style="color: #F97316;"></i></div>
+          <div class="stat-value"><%= stats.totalBookings %></div>
+          <div class="stat-label">Total Bookings</div>
+          <% if (stats.pendingBookings > 0) { %><span class="badge bg-warning text-dark mt-1" style="font-size: 0.72rem;"><%= stats.pendingBookings %> pending</span><% } %>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #FFF0EB;"><i class="bi bi-currency-rupee" style="color: var(--primary);"></i></div>
+          <div class="stat-value" style="font-size: 1.4rem;">₹<%= stats.totalRevenue.toLocaleString('en-IN') %></div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Bookings + Quick Actions -->
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="admin-table">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-700 mb-0">Recent Bookings</h6>
+            <a href="/owner/bookings" class="btn btn-sm btn-outline-primary">View All</a>
+          </div>
+          <table class="table table-hover mb-0">
+            <thead><tr><th>Guest</th><th>PG</th><th>Check-In</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <% if (recentBookings.length > 0) { %>
+                <% recentBookings.forEach(b => { %>
+                  <tr>
+                    <td><div class="fw-600 small"><%= b.user?.username %></div><div class="text-muted" style="font-size:0.73rem"><%= b.user?.phone || b.user?.email %></div></td>
+                    <td><span class="small"><%= b.pg?.title?.substring(0,22) %>...</span></td>
+                    <td><span class="text-muted small"><%= b.checkIn?.toLocaleDateString('en-IN') %></span></td>
+                    <td><span class="fw-700 small">₹<%= b.totalAmount?.toLocaleString('en-IN') %></span></td>
+                    <td>
+                      <span class="badge" style="background: <%= b.status === 'approved' ? '#D1FAE5' : b.status === 'pending' ? '#FEF3C7' : '#FEE2E2' %>; color: <%= b.status === 'approved' ? '#065F46' : b.status === 'pending' ? '#92400E' : '#991B1B' %>; border-radius: 100px; padding: 4px 10px; font-size: 0.72rem;">
+                        <%= b.status %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="5" class="text-center py-5 text-muted">No bookings yet. <a href="/owner/pgs/new">Add your first PG!</a></td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="stat-card">
+          <h6 class="fw-700 mb-4">Quick Actions</h6>
+          <div class="d-flex flex-column gap-3">
+            <% if (owner.ownerApproved) { %>
+              <a href="/owner/pgs/new" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>Add New PG</a>
+            <% } else { %>
+              <button class="btn btn-secondary" disabled><i class="bi bi-lock me-2"></i>Add PG (Approval Needed)</button>
+            <% } %>
+            <a href="/owner/bookings?status=pending" class="btn btn-warning text-dark"><i class="bi bi-clock me-2"></i>Pending Bookings (<%= stats.pendingBookings %>)</a>
+            <a href="/owner/reviews" class="btn btn-outline-primary"><i class="bi bi-star me-2"></i>View Reviews (<%= stats.totalReviews %>)</a>
+            <a href="/owner/my-pgs" class="btn btn-outline-secondary"><i class="bi bi-building me-2"></i>All My PGs (<%= stats.totalPGs %>)</a>
+          </div>
+
+          <% if (stats.totalReviews > 0) { %>
+            <hr>
+            <div class="text-center">
+              <div class="fw-700" style="color: #F59E0B; font-size: 1.6rem;">★ <%= (stats.totalReviews > 0 ? '4.5' : '—') %></div>
+              <div class="text-muted small">Average Rating Across All PGs</div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,45 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="admin-wrapper">
+  <%- include('../partials/admin-sidebar', { activePage: 'users' }) %>
+  <div class="admin-main">
+    <%- include('../partials/flash') %>
+    <div class="admin-header">
+      <h1>Manage Users</h1>
+      <p class="text-muted mb-0"><%= users.length %> registered user<%= users.length !== 1 ? 's' : '' %></p>
+    </div>
+    <div class="admin-table">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr><th>User</th><th>Phone</th><th>Joined</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% if (users.length > 0) { %>
+            <% users.forEach(u => { %>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm"><%= u.username.charAt(0).toUpperCase() %></div>
+                    <div>
+                      <div class="fw-700 small"><%= u.username %></div>
+                      <div class="text-muted" style="font-size:0.73rem"><%= u.email %></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="text-muted small"><%= u.phone || '—' %></span></td>
+                <td><span class="text-muted small"><%= new Date(u.createdAt).toLocaleDateString('en-IN') %></span></td>
+                <td>
+                  <form action="/admin/users/<%= u._id %>/delete" method="POST" onsubmit="return confirm('Delete user <%= u.username %>? This cannot be undone.')">
+                    <button class="btn btn-sm btn-outline-danger py-0 px-2"><i class="bi bi-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="4" class="text-center py-5 text-muted">No users found.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,49 @@
+<% layout("/layouts/boilerplate.ejs") %>
+  <div class="admin-wrapper">
+    <%- include('../partials/admin-sidebar', { activePage: 'complaints' }) %>
+    <div class="admin-main">
+      <%- include('../partials/flash') %>
+      <div class="admin-header">
+        <h1>Complaints & Queries</h1>
+        <p class="text-muted"><%= complaints.length %> total complaints</p>
+      </div>
+      <div class="row g-4">
+        <% if (complaints.length > 0) { %>
+          <% complaints.forEach(c => { %>
+            <div class="col-lg-6">
+              <div class="stat-card h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm small"><%= c.user?.username?.charAt(0).toUpperCase() %></div>
+                    <div>
+                      <div class="fw-700 small"><%= c.user?.username %></div>
+                      <div class="text-muted" style="font-size: 0.75rem;"><%= c.user?.email %></div>
+                    </div>
+                  </div>
+                  <span class="badge" style="background: <%= c.status === 'resolved' ? '#D1FAE5' : c.status === 'in-progress' ? '#FEF3C7' : '#FEE2E2' %>; color: <%= c.status === 'resolved' ? '#065F46' : c.status === 'in-progress' ? '#92400E' : '#991B1B' %>; border-radius: 100px; padding: 4px 10px; font-size: 0.72rem;">
+                    <%= c.status %>
+                  </span>
+                </div>
+                <h6 class="fw-700"><%= c.subject %></h6>
+                <p class="text-muted small mb-3"><%= c.message %></p>
+                <% if (c.pg) { %><p class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-building me-1"></i>Re: <%= c.pg?.title %></p><% } %>
+                <% if (c.adminReply) { %>
+                  <div class="alert alert-success py-2 small"><strong>Your reply:</strong> <%= c.adminReply %></div>
+                <% } else { %>
+                  <form action="/admin/complaints/<%= c._id %>/reply" method="POST" class="mt-3">
+                    <div class="input-group">
+                      <input type="text" name="reply" class="form-control form-control-sm" placeholder="Type your reply..." required>
+                      <button class="btn btn-primary btn-sm">Send</button>
+                    </div>
+                  </form>
+                <% } %>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;"><%= c.createdAt.toLocaleDateString('en-IN') %></div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-12 no-results"><div class="icon">✅</div><h4>No Complaints</h4><p class="text-muted">Great! No open complaints right now.</p></div>
+        <% } %>
+      </div>
+    </div>
+  </div>
